@@ -156,13 +156,13 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor {
 	 * @return boolean|WP_Error True if set successfully; WP_Error on failure.
 	 */
 	public function set_quality( $quality = null ) {
-		$quality_result = parent::set_quality( $quality );
-		if ( is_wp_error( $quality_result ) ) {
-			return $quality_result;
-		} else {
-			$quality = $this->get_quality();
+		if( $quality !== false ) {
+			$quality_result = parent::set_quality( $quality );
+			if ( is_wp_error( $quality_result ) ) {
+				return $quality_result;
+			}
 		}
-
+		$quality = $this->get_quality();
 		try {
 			if ( 'image/jpeg' == $this->mime_type ) {
 				$this->image->setImageCompressionQuality( $quality );
@@ -451,6 +451,7 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor {
 			$filename = $this->generate_filename( null, null, $extension );
 
 		try {
+			$this->set_quality( false );
 			// Store initial Format
 			$orig_format = $this->image->getImageFormat();
 
